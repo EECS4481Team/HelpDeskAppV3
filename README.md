@@ -50,7 +50,7 @@ CREATE TABLE public_chatroom_table (
  From the root folder, in a terminal, use the commands:
 
 ```bash
-cd /HelpDeskAppV1/Client 
+cd /HelpDeskAppV3/Client 
 ```
 
 And install node modules using:
@@ -66,7 +66,7 @@ npm start
 
 Now for the backend, open a new terminal and use:
 ```bash
-cd /HelpDeskAppV1/Server 
+cd /HelpDeskAppV3/Server 
 ```
 
 And install node modules using:
