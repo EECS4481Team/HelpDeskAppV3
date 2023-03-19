@@ -64,7 +64,7 @@ function Register(){
         }else if (password.search(/[0-9]/) < 0){
             toast.error("Your password must contain at least one digit",toastOptions);
             return false;
-        }else if (password.search(/[!@#$%^&*?()<>{}-_=+.,;:'`]/) < 0){
+        }else if (password.search(/[-!@#$%^&*?()<>{}_=+.,;:'`]/) < 0){
             toast.error("Your password must contain at least one special character from !@#$%^&*?()<>{}-_=+.,;:'`",toastOptions);
             return false;
         }else if (email === ""){
