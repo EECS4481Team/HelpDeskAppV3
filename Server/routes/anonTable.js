@@ -31,9 +31,12 @@ con.connect( (err) =>
 router.get("/", verify.verifyToken, (request, response) => { 
     
     con.query(`SELECT * FROM anonymous_user_table`, function (err, result, fields) {
-            if (err) throw err;
-            console.log(JSON.stringify(result));
-            response.send(result)
+        if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+        else
+            {
+                console.log(JSON.stringify(result));
+                response.send(result)
+            }
         });
 });
 
@@ -44,8 +47,9 @@ router.post("/", (request, response) =>
 
         con.query(`SELECT COUNT(*) as numRows FROM anonymous_user_table`, (err, result) =>
         {
-            con.query(`INSERT INTO anonymous_user_table (User_ID, Name) VALUES (${result[0].numRows + 1}, '${input.name}')`, function (err, result) {
-                if (err) console.log(err);
+            let sqlQuery = `INSERT INTO anonymous_user_table (User_ID, Name) VALUES (?, ?)`;
+            con.query(sqlQuery, [result[0].numRows + 1, input.name], function (err, result) {
+                if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
                 else console.log("1 record inserted");
             });
             

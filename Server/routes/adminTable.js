@@ -35,20 +35,20 @@ con.connect( (err) =>
 router.get("/username", verify.verifyToken, (request, response) => { 
     console.log(request.query);
 
-    //problem, sql injection very likely
-    con.query(`SELECT User_ID FROM admin_table WHERE UserName = '${request.query.userName}'`, function (err, result, fields) { 
-        if (err) throw err;
-        response.send(result);
+    let sqlQuery = `SELECT User_ID FROM admin_table WHERE UserName = ?`;
+    con.query(sqlQuery,[request.query.userName], function (err, result, fields) { 
+        if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"))
+        else response.send(result);
     })
 });
 
 //get email
 router.get("/email", verify.verifyToken, (request, response) => { 
 
-    //problem, sql injection very likely
-    con.query(`SELECT Email FROM admin_table WHERE UserName = '${request.query.userName}'`, function (err, result, fields) { 
-        if (err) throw err;
-        response.send(result);
+    let sqlQuery = `SELECT Email FROM admin_table WHERE UserName = ?`;
+    con.query(sqlQuery, [request.query.userName], function (err, result, fields) { 
+        if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"))
+        else response.send(result);
     })
 });
 
@@ -71,11 +71,10 @@ router.post("/register", (request, response) =>
                 if (err) {console.log("Hashing error")
                 response.status(500).send("Hashing error")
                 return};
-                
                 con.query(`SELECT COUNT(*) as numRows FROM admin_table`, (err, result) =>
                 {
-                    let sqlQuery = `INSERT INTO admin_table (User_ID, UserName, PasswordHash, Email) VALUES (${result[0].numRows + 1}, '${input.userName}', '${hash}', '${input.email}' )`;
-                    con.query(sqlQuery, function (err, result) {
+                    let sqlQuery = `INSERT INTO admin_table (User_ID, UserName, PasswordHash, Email) VALUES (?, ?, ?, ? )`;
+                    con.query(sqlQuery, [result[0].numRows + 1, input.userName, hash, input.email], function (err, result) {
                         if (err) 
                         {
                             console.log("An admin with this name already exists");
@@ -97,32 +96,34 @@ router.post("/register", (request, response) =>
 router.post("/login", async (request,response) =>
 {
     let user = request.body;
-    let sqlQuery = `SELECT UserName, PasswordHash FROM admin_table WHERE username = '${user.username}'`
+    let sqlQuery = `SELECT UserName, PasswordHash FROM admin_table WHERE username = ?`
 
-    con.query(sqlQuery, async function (err, result) {
-        if (err) console.log(err);   
-        
-        if( JSON.stringify(result) == "[]" )
-        {
-            response.status(400).send("no such user exists")
-            console.log("NSU exist")
-            return
-        }
-        
-        let validPassword = await bcrypt.compare(user.password, result[0].PasswordHash )
-        if( !validPassword )
-        {
-            response.status(400).send("Incorrect Password")
-            console.log("bad password")
-            return
-        }
-        else
-        {
-            let token = jwt.sign({user}, process.env.JWT_KEY, {
-                expiresIn: "1h",
-            });
-            response.status(200).json(token);
-            return
+    con.query(sqlQuery, [user.username], async function (err, result) {
+        if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"))
+        else  
+            {
+            if( JSON.stringify(result) == "[]" )
+            {
+                response.status(400).send("no such user exists")
+                console.log("NSU exist")
+                return
+            }
+            
+            let validPassword = await bcrypt.compare(user.password, result[0].PasswordHash )
+            if( !validPassword )
+            {
+                response.status(400).send("Incorrect Password")
+                console.log("bad password")
+                return
+            }
+            else
+            {
+                let token = jwt.sign({user}, process.env.JWT_KEY, {
+                    expiresIn: "1h",
+                });
+                response.status(200).json(token);
+                return
+            }
         }
     })
 })
@@ -135,19 +136,20 @@ router.put("/newPassword", verify.verifyUserIdentity, (request, response) =>
     if(verifyUserIdentity(request, response))
     {
     bcrypt.genSalt(saltRounds, function(err, salt) {
-        if (err) console.log(err);
-        console.log(salt)
+        if (err) (response.status(400).send("There has been an error in salting. Please contact an administrator."))
+        else 
+        {
+            bcrypt.hash(input.newPass, salt, function(err, hash) {
+                if (err) console.log(err);
+                console.log(hash)
 
-        bcrypt.hash(input.newPass, salt, function(err, hash) {
-            if (err) console.log(err);
-            console.log(hash)
-
-                let sqlQuery = `UPDATE admin_table SET name = '${hash}' WHERE UserName = '${input.userName}'`;
-                con.query(sqlQuery, function (err, result) {
-                    if (err) console.log(err);
-                    else console.log("admin password updated");
-                });
-        });
+                    let sqlQuery = `UPDATE admin_table SET name = ? WHERE UserName = ?`;
+                    con.query(sqlQuery,[hash, input.userName], function (err, result) {
+                        if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+                        else console.log("admin password updated");
+                    });
+            });
+        }
      });
     response.sendStatus(200);
     }
@@ -157,15 +159,15 @@ router.put("/newPassword", verify.verifyUserIdentity, (request, response) =>
 router.put("/newEmail", verify.verifyUserIdentity, (request, response) =>
 {
     let input = request.body;
-    let sqlQuery = `UPDATE admin_table SET name = '${input.newMail}' WHERE UserName = '${input.userName}'`;
+    let sqlQuery = `UPDATE admin_table SET name = ? WHERE UserName = ?`;
 
     if(verifyUserIdentity(request, response))
     {
-        con.query(sqlQuery, function (err, result) {
-            if (err) console.log(err);
-            else console.log("Admin Email update");
+        con.query(sqlQuery,[input.newMail, input.userName], function (err, result) {
+            if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"))
+            else { console.log("Admin Email update"); response.sendStatus(200); }
         });
-        response.sendStatus(200);
+        
     }
 });
 
@@ -173,14 +175,14 @@ router.put("/newEmail", verify.verifyUserIdentity, (request, response) =>
 router.delete("/Delete", verify.verifyUserIdentity, (request, response) =>
 {
     let input = request.body;
-    let sqlQuery = `DELETE FROM admin_table WHERE UserName = '${input.userName}'`
+    let sqlQuery = `DELETE FROM admin_table WHERE UserName = ?`
     if(verifyUserIdentity(request, response))
     {
-        con.query(sqlQuery, function (err, result) {
-            if (err) throw err;
-            console.log("Number of records deleted: " + result.affectedRows);
+        con.query(sqlQuery, [input.userName], function (err, result) {
+            if (err) (response.status(400).send("There is an error in the SQL query, please enter valid entry"))
+            else { console.log("Number of records deleted: " + result.affectedRows);  response.sendStatus(200);}
         });
-        response.sendStatus(200);
+       
     }
 });
 
