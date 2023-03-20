@@ -25,9 +25,9 @@ const con = mysql.createConnection({
     database: database
 });
 
-con.connect( (err) =>
+con.connect( (error) =>
 {
-    if (err) {console.log(`Failed to connect to database: ${err}`)}
+    if (error) {console.log(`Failed to connect to database: ${err}`)}
     else {console.log("Connection successful - public room")};
 })
 
@@ -35,10 +35,10 @@ con.connect( (err) =>
 router.get("/GetChatLog", (request, response) => { 
     console.log("Retrieving chat logs from a specific public chat room");
     const { ChatRoomID } = request.body;
-    const query = `SELECT Chat_Log FROM public_chatroom_table WHERE Chatroom_ID = ${ChatRoomID}`;
-    con.query(query, (error, result) => {
-      if (error) throw error;
-      response.send(result[0]);
+    const query = `SELECT Chat_Log FROM public_chatroom_table WHERE Chatroom_ID = ?`;
+    con.query(query, [ChatRoomID],  (error, result) => {
+      if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+      else response.send(result[0]);
     });
 });
 
@@ -49,10 +49,10 @@ router.get("/GetAdmins", (request, response) => {
   FROM public_chatroom_admin_users 
   JOIN admin_table 
   ON public_chatroom_admin_users.User_ID = admin_table.User_ID
-  WHERE Chatroom_ID = ${ChatRoomID}`;
-  con.query(query, (error, result) => {
-    if (error) throw error;
-    response.send(result[0]);
+  WHERE Chatroom_ID = ?`;
+  con.query(query, [ChatRoomID], (error, result) => {
+    if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+    else response.send(result[0]);
   });
 });
 
@@ -63,10 +63,10 @@ router.get("/GetAnons", (request, response) => {
   FROM public_chatroom_anon_users 
   JOIN anonymous_user_table 
   ON public_chatroom_anon_users.User_ID = anonymous_user_table.User_ID
-  WHERE Chatroom_ID = ${ChatRoomID}`;
-  con.query(query, (error, result) => {
-    if (error) throw error;
-    response.send(result[0]);
+  WHERE Chatroom_ID = ?`;
+  con.query(query, [ChatRoomID], (error, result) => {
+    if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+    else response.send(result[0]);
   });
 });
 
@@ -76,16 +76,18 @@ router.post("/create", (request, response) => {
    
     const { HelpDeskUser, ChatRoomName } = request.body;
     const query = `INSERT INTO public_chatroom_table (Chatroom_Name) 
-    VALUES ('${ChatRoomName}'); `   
-    con.query(query, (error, result) => {
-      if (error) throw error;
-     
-      const query2 =  `INSERT INTO public_chatroom_admin_users (User_ID, Chatroom_ID)
-       VALUES ('${HelpDeskUser}', '${result.insertId}' )`;
-      con.query(query2, (e1, r1) => {
-        if (e1) throw e1;
-       // response.send(`user: ${HelpDeskUser} added to chatroom ID: ${result.insertId}`);
-      });
+    VALUES (?); `   
+    con.query(query, [ChatRoomName], (error, result) => {
+      if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+      else
+      {
+        const query2 =  `INSERT INTO public_chatroom_admin_users (User_ID, Chatroom_ID)
+        VALUES ( )`;
+        con.query(query2, [HelpDeskUser, result.insertId],  (e1, r1) => {
+          if (e1) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+        // response.send(`user: ${HelpDeskUser} added to chatroom ID: ${result.insertId}`);
+        });
+      }
       response.send(`Chat room created with ID: ${result.insertId} \nuser: ${HelpDeskUser} added to chatroom ID: ${result.insertId}`);
     });
 
@@ -96,10 +98,10 @@ router.post("/addAnonUser", (request, response) => {
   console.log("Updating a public chat room");
   const { ChatRoomID, AnonymouUser } = request.body;
   const query = `INSERT public_chatroom_anon_users (Chatroom_ID, User_ID) 
-  VALUES('${ChatRoomID}', '${AnonymouUser}' )`;
-  con.query(query, (error, result) => {
-    if (error) throw error;
-    response.send(`Chat room updated with ID: ${ChatRoomID}`);
+  VALUES(?, ?)`;
+  con.query(query,[ChatRoomID, AnonymouUser], (error, result) => {
+    if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+    else response.send(`Chat room updated with ID: ${ChatRoomID}`);
   });
 });
 
@@ -108,10 +110,10 @@ router.post("/addAdminUser", (request, response) => {
   console.log("Updating a public chat room");
   const { ChatRoomID, HelpDeskUser } = request.body;
   const query = `INSERT public_chatroom_admin_users (Chatroom_ID, User_ID) 
-  VALUES('${ChatRoomID}', '${HelpDeskUser}' )`;
-  con.query(query, (error, result) => {
-    if (error) throw error;
-    response.send(`Chat room updated with ID: ${ChatRoomID}`);
+  VALUES(?, ?)`;
+  con.query(query,[ChatRoomID, AnonymouUser], (error, result) => {
+    if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+    else response.send(`Chat room updated with ID: ${ChatRoomID}`);
   });
 });
 
@@ -120,11 +122,11 @@ router.put("/updateName", (request, response) => {
     console.log("Updating a public chat room");
     const { ChatRoomID, ChatRoomName } = request.body;
     const query = `UPDATE public_chatroom_table 
-    SET Chatroom_Name = '${ChatRoomName}' 
-    WHERE Chatroom_ID = ${ChatRoomID}`;
-    con.query(query, (error, result) => {
-      if (error) throw error;
-      response.send(`Chat room updated with ID: ${ChatRoomID}`);
+    SET Chatroom_Name = ? 
+    WHERE Chatroom_ID = ?`;
+    con.query(query,[ChatRoomName, ChatRoomID],(error, result) => {
+      if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+      else response.send(`Chat room updated with ID: ${ChatRoomID}`);
     });
 });
 
@@ -133,11 +135,11 @@ router.put("/updateChatLog", (request, response) => {
   console.log("Updating a public chat room");
   const { ChatRoomID, ChatLog } = request.body;
   const query = `UPDATE public_chatroom_table 
-  SET Chat_Log = CONCAT(Chat_Log, '${ChatLog}') 
-  WHERE Chatroom_ID = ${ChatRoomID}`;
-  con.query(query, (error, result) => {
-    if (error) throw error;
-    response.send(`Chat room updated with ID: ${ChatRoomID}`);
+  SET Chat_Log = CONCAT(Chat_Log, ?) 
+  WHERE Chatroom_ID = ?`;
+  con.query(query,[ChatLog, ChatRoomID], (error, result) => {
+    if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+    else response.send(`Chat room updated with ID: ${ChatRoomID}`);
   });
 });
 
@@ -146,10 +148,10 @@ router.put("/updateChatLog", (request, response) => {
 router.delete("/delete", (request, response) => {
     console.log("Deleting a public chat room");
     const { ChatRoomID } = request.body;
-    const query = `DELETE FROM public_chatroom_table WHERE Chatroom_ID = ${ChatRoomID}`;
-    con.query(query, (error, result) => {
-      if (error) throw error;
-      response.send(`Chat room deleted with ID: ${ChatRoomID}`);
+    const query = `DELETE FROM public_chatroom_table WHERE Chatroom_ID = ?`;
+    con.query(query, [ChatRoomID], (error, result) => {
+      if (error) (response.status(400).send("There is an error in the SQL query, please enter valid entry"));
+      else response.send(`Chat room deleted with ID: ${ChatRoomID}`);
     });
   });
 
