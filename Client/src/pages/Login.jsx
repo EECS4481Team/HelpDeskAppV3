@@ -6,6 +6,7 @@ import {ToastContainer, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { loginRoute } from "../utils/APIRoutes";
+import DOMPurify from 'dompurify';
 function Login(){
     const navigate = useNavigate();
     const [values,setValues]=useState({
@@ -20,12 +21,14 @@ function Login(){
     draggable: true,
     theme: "dark",
     }
+    
     //submit to check login against the backend database
     const handleSubmit = async (event)=>{
         event.preventDefault();
         if(handleValidation()){
                 console.log("in validation",loginRoute);
             const {password,username} = values;
+            
             const {data} = await axios.post(loginRoute,{
                 username,
                 password,
@@ -54,6 +57,10 @@ function Login(){
             toast.error("Username and password is required",toastOptions);
             return false;
         }
+        DOMPurify.sanitize(password);
+        console.log(DOMPurify.sanitize(password));
+        DOMPurify.sanitize(username);
+        console.log(DOMPurify.sanitize(username));
         return true;
     }
     //to change inputs
@@ -84,7 +91,6 @@ function Login(){
     </>
     );
 }
-
 const FormContainer = styled.div`
 height: 100vh;
 width: 100vw;
