@@ -11,6 +11,7 @@
     "buffer": "^6.0.3",
     "Buffer": "^0.0.0",
     "dompurify": "^3.0.1",
+    "firebase": "^9.18.0",
     "i": "^0.3.7",
     "isomorphic-dompurify": "^1.2.0",
     "jsdom": "^21.1.1",
@@ -23,6 +24,7 @@
     "react-toastify": "^9.1.1",
     "socket.io-client": "^4.6.0",
     "styled-components": "^5.3.6",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

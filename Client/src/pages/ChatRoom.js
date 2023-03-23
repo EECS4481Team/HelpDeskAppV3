@@ -3,7 +3,8 @@ import ScrollToBottom from "react-scroll-to-bottom";
 function ChatRoom({socket,username,room}) {
     const [currentMessage, setCurrentMessage] =useState("");
     const [messageList, setMessageList] = useState([]);
-
+    const api_key = "652966869711951";
+    const cloud_name = "dzuro2zmw";
     //create sent messages
     const sendMessage = async() =>{
         if(currentMessage !== ""){
@@ -58,7 +59,8 @@ function ChatRoom({socket,username,room}) {
             }}
             onKeyPress={(event)=> {event.key === "Enter" && sendMessage();
             }}
-            />
+            />     
+            <button value='Upload' >&#9981;</button>
             <button onClick={sendMessage}>&#9658;</button>
         </div>
     </div>
