@@ -93,8 +93,7 @@ function GlobalChatRoom({ socket, username, room }) {
             event.key === "Enter" && sendMessage();
           }}
         />
-        <input type="file" onChange={handleFileInputChange} />
-        <button onClick={uploadFile}>&#9981;</button>
+      
         <button onClick={sendMessage}>&#9658;</button>
 
       </div>

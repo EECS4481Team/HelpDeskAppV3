@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import SetAvatar from "./pages/SetAvatar";
 import AnonymousChat from "./pages/AnonymousChat";
 import GlobalChat from "./pages/GlobalChat";
+import Upload from "./pages/Upload";
 
 export default function App() {
   //returns all the redirects to the different pages. Can also create the index page but not nessecary
@@ -20,7 +21,7 @@ export default function App() {
         <Route path="/chat/anon" element={<AnonymousChat />}/>
         <Route path="/globalchat" element={<GlobalChat />}/>
         <Route path="" element={<GlobalChat />}/>
-        
+        <Route path="/upload" element={<Upload/>}/>
       </Routes>
     </BrowserRouter>
   );
