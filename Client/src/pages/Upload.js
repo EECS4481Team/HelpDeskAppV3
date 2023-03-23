@@ -51,8 +51,8 @@ return (
         <div id="space">
         <button id="fileUp" onClick={uploadImage}>Upload Image</button>
         </div>
-        <div id="space">
-        <button id="redirect" onClick={moveHome}>Click to return to home</button>
+        <div id="space" className="redirect">
+        <button onClick={moveHome}>Click to return to home</button>
         </div>
         {imageList.map((url) => {
             return <div class="container"> <img src={url}/> <div class="bottom">{url}</div> </div>

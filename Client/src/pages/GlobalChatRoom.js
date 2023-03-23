@@ -103,11 +103,11 @@ function GlobalChatRoom({ socket, username, room }) {
         <button onClick={sendMessage}>&#9658;</button>
 
       </div>
-      <div>
-        <button id="redirect" onClick={refreshPage}>Click to refresh & return to previous page</button>
+      <div className="redirect">
+        <button onClick={refreshPage}>Click to refresh & return to previous page</button>
       </div>
-      <div>
-        <button id="redirect" onClick={moveUpload}>Click to join image chat</button>
+      <div className="redirect">
+        <button onClick={moveUpload}>Click to join image chat</button>
       </div>
     </div>
 

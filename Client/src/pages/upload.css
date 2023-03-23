@@ -9,7 +9,7 @@
 }
 
 img{
-    width: 500px;
+    object-fit: contain;
     margin: 10px;
     margin-bottom: 70px;
 }
