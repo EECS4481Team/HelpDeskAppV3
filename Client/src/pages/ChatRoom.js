@@ -73,11 +73,13 @@ function ChatRoom({socket,username,room}) {
             onKeyPress={(event)=> {event.key === "Enter" && sendMessage();
             }}
             />     
-            <button onClick={moveUpload} >&#9981;</button>
             <button onClick={sendMessage}>&#9658;</button>
         </div>
-        <div >
+        <div className="redirect">
         <button id="redirect" onClick={moveHome}>Click to return to home</button>
+        </div>
+        <div className="redirect">
+        <button onClick={moveUpload}>Click to join image chat</button>
         </div>
     </div>
  
