@@ -1,14 +1,18 @@
 const express = require("express");
 const { resourceLimits } = require('worker_threads');
 const mysql = require("mysql2");
+const fileUpload = require("express-fileupload");
 const dotenv = require('dotenv').config();
+const multer = require('multer');
 const cors = require("cors"); 
 const {Server} =require("socket.io");
-
+const path = require('path');
 const port = process.env.PORT;
+
 
 const app = express();
 app.use(cors());
+app.use(fileUpload());
 const server = require('http').createServer(app);
 const io = new Server(server, {
     //which server will be running
@@ -53,6 +57,7 @@ app.get("/api", (request, response) => /*, next  (also included in function call
 });
 
 
+
 app.use('/api/admin', adminAccounts)//use this "router" for any page with /adminLogin
 app.use('/api/anonymous', anonAccounts)//use this "router" for any page with /anonomousLogin
 app.use('/helpDesk', privChatRooms)//use this "router" for any page with /helpDesk
@@ -63,4 +68,4 @@ app.use('/chatRooms', pubChatRooms)//use this "router" for any page with /chatRo
 server.listen(port, () =>
 {
     console.log(`listening on port ${port}`)
-});
+}); 

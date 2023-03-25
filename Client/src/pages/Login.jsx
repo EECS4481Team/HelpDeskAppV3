@@ -76,8 +76,12 @@ function Login(){
                     <img src={Logo} alt="Logo" />
                     <h1>Sneaky Admin</h1>
                 </div>
+                <div class="input">
                 <input type="text" placeholder="Username" name="username" onChange={(e)=> handleChange(e)}/>
+                </div>
+                <div class="input">
                 <input type="password" placeholder="Password" name="password" onChange={(e)=> handleChange(e)}/>
+                </div>
                 <button type="submit">Log In</button>
                 <span>  
                     Don't have an account ? <Link to="/register">Register</Link>

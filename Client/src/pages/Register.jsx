@@ -86,10 +86,18 @@ function Register(){
                     <img src={Logo} alt="Logo" />
                     <h1>Admin Register</h1>
                 </div>
+                <div class="input">
                 <input type="text" placeholder="Username" name="userName" onChange={(e)=> handleChange(e)}/>
+                </div>
+                <div class="input">
                 <input type="email" placeholder="Email" name="email" onChange={(e)=> handleChange(e)}/>
+                </div>
+                <div class="input">
                 <input type="password" placeholder="Password" name="password" onChange={(e)=> handleChange(e)}/>
+                </div>
+                <div class="input">
                 <input type="password" placeholder="Confirm Password" name="confirmPassword" onChange={(e)=> handleChange(e)}/>
+                </div>
                 <button type="submit">Create User</button>
                 <span>  
                     Already have an account ? <Link to="/login">Login</Link>
