@@ -56,7 +56,7 @@ cd /HelpDeskAppV3/Client
 And install node modules using:
 
 ```bash
-npm install
+npm install firebase
 ```
 
 You can start the frontend with
@@ -72,7 +72,7 @@ cd /HelpDeskAppV3/Server
 And install node modules using:
 
 ```bash
-npm install
+npm install express-fileupload
 ```
 
 and create an ".env" file in the server folder with the following information (Use your MySQL Workbench login):
