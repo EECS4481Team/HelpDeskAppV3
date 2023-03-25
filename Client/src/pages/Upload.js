@@ -55,7 +55,7 @@ return (
         <button onClick={moveHome}>Click to return to home</button>
         </div>
         {imageList.map((url) => {
-            return <div class="container"> <img src={url}/> <div class="bottom">{url}</div> </div>
+            return <div class="container"> <img src={url}/> </div>
         })}
     </div>
 )
