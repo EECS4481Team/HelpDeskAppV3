@@ -20,6 +20,8 @@ function Chat(){
     }
 
     if (localStorage.getItem(`HelpDeskAppV1`) != null) {
+      localStorage.setItem(`anoncookie`, null)
+
       //Get the "data" from localStorage using key `HelpDeskAppV1`
       var str = localStorage.getItem(`HelpDeskAppV1`);
       //Gives a string in base64, only need info between 2 periods
@@ -38,16 +40,39 @@ function Chat(){
       console.log(newStr);
       val = newStr;
     }
+
+    else if (localStorage.getItem(`anoncookie`) != null) {
+      //Get the "data" from localStorage using key `HelpDeskAppV1`
+      var str = localStorage.getItem(`anoncookie`);
+      //Gives a string in base64, only need info between 2 periods
+      var subStr = str.substring(
+        str.indexOf('.') + 1, 
+        str.lastIndexOf('.')
+      );
+      //Decode from base64
+      var dec = atob(subStr);
+      //Get substring between second instance of ':' and first instance of ','
+
+      var newStr = dec.substring( 
+        dec.indexOf(':"', 1) + 2, 
+        dec.indexOf('",')
+      );
+      console.log(newStr)
+      //Check string
+      // console.log(newStr);
+      val = newStr;
+    }
+
     //Set the username here for joinRoom
     let [username, setUsername] = useState(val);
     //Determines how the user joins the chat room
     const joinRoom = () => {
-        console.log("This is val: " + val);
-        console.log("This is Username: " +username);
+        // console.log("This is val: " + val);
+        // console.log("This is Username: " +username);
         username = val;
       //Check if Username and room code is not empty
       if (username !== "" && room !== ""){
-        console.log(username);
+        // console.log(username);
         socket.emit("join_room",room);
         setShowChat(true);
       }
