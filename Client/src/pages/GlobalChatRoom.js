@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import ScrollToBottom from "react-scroll-to-bottom";
+import { useNavigate } from "react-router-dom";
 
 function GlobalChatRoom({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
+  const navigate = useNavigate();
 
   // refresh function to go back
   function refreshPage() {
@@ -47,6 +49,10 @@ function GlobalChatRoom({ socket, username, room }) {
 
   const handleFileInputChange = (event) => {
     setSelectedFile(event.target.files[0]);
+  }
+
+  const moveUpload = () => {
+    navigate("/upload")
   }
 
   useEffect(() => {
@@ -93,13 +99,15 @@ function GlobalChatRoom({ socket, username, room }) {
             event.key === "Enter" && sendMessage();
           }}
         />
-        <input type="file" onChange={handleFileInputChange} />
-        <button onClick={uploadFile}>&#9981;</button>
+      
         <button onClick={sendMessage}>&#9658;</button>
 
       </div>
-      <div>
+      <div className="redirect">
         <button onClick={refreshPage}>Click to refresh & return to previous page</button>
+      </div>
+      <div className="redirect">
+        <button onClick={moveUpload}>Click to join image chat</button>
       </div>
     </div>
 

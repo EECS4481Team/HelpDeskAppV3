@@ -1,8 +1,13 @@
 import React,{useEffect, useState} from 'react'
 import ScrollToBottom from "react-scroll-to-bottom";
+import { useNavigate } from "react-router-dom";
+
 function ChatRoom({socket,username,room}) {
     const [currentMessage, setCurrentMessage] =useState("");
     const [messageList, setMessageList] = useState([]);
+    const api_key = "652966869711951";
+    const cloud_name = "dzuro2zmw";
+    const navigate = useNavigate();
 
     //create sent messages
     const sendMessage = async() =>{
@@ -20,12 +25,21 @@ function ChatRoom({socket,username,room}) {
         }
     };
 
+    const moveHome = () => {
+        navigate("/")
+      }
+
+    const moveUpload = () => {
+        navigate("/upload")
+    }
+
     useEffect(() => {
         socket.on("receive_message", (data) => {
           setMessageList((list) => [...list,data]);
           console.log(data);
         })
       },[socket]);
+      
   return (
     //Render messages
     <div className="chat-window">
@@ -58,8 +72,14 @@ function ChatRoom({socket,username,room}) {
             }}
             onKeyPress={(event)=> {event.key === "Enter" && sendMessage();
             }}
-            />
+            />     
             <button onClick={sendMessage}>&#9658;</button>
+        </div>
+        <div className="redirect">
+        <button id="redirect" onClick={moveHome}>Click to return to home</button>
+        </div>
+        <div className="redirect">
+        <button onClick={moveUpload}>Click to join image chat</button>
         </div>
     </div>
  

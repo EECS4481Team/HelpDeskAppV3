@@ -195,4 +195,25 @@
   .hide {
     opacity: 0 !important;
   }
+
+  .redirect button{
+    width: 225px;
+    height: 50px;
+    margin: 7px;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    background: #43a047;
+    color: #fff;
+    cursor: pointer;
+  }
   
+  .redirect button:hover{
+    background: #2e7d32;
+  }
+
+  .input {
+    transform: translate(-3.5%, 0%);
+    text-align: center;
+  }
