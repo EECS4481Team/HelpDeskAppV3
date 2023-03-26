@@ -84,6 +84,7 @@ DATABASE_PASSWORD="dbpassword"
 DATABASE_NAME="eecs4481"
 DATABASE_HOST="localhost"
 JWT_KEY="resxg9ks28Diii1JbbpFDEQu7fsGXMg6BDnOq3N6"
+COOKIE_KEY="opiu!$!$498NT2Yp/[/10P83)*(&{}:>:9FRp/7YIwh;/hgwtresthE"
 ```
 
 You can start the backend with
